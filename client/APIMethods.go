@@ -1,18 +1,13 @@
 package client
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
 
 	"github.com/ethereum/go-ethereum/common"
 )
-
-var POLYMARKET_SIGNER = Signer{
-	PK,
-	common.HexToAddress("0xA3D381B8C135cEd27efbbd3f231a0E1B6B931ad0"),
-	137,
-}
 
 func GetAddress() common.Address {
 	return POLYMARKET_SIGNER.account
@@ -43,9 +38,43 @@ func GetOk() string {
 	return sb
 }
 
+func GetMidpoint(token_id string) string {
+	endpoint := HOST + MID_POINT + "?token_id=" + token_id
+	raw_creds, err := GetWithL0Headers(endpoint, nil)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Printf("Midpoint %s\n", string(raw_creds[:]))
+	return string(raw_creds[:])
+}
+
+func GetMidpoints(bookParams []BookParams) string {
+	endpoint := HOST + MID_POINTS
+
+	requests := []map[string]string{}
+
+	for _, bp := range bookParams {
+		requests = append(requests, map[string]string{
+			"token_id": bp.token_id,
+			"side":     "BUY",
+		})
+	}
+	body, err := json.Marshal(requests)
+	if err != nil {
+		fmt.Println(err)
+		return ""
+	}
+	raw_creds, err := PostWithL0Headers(endpoint, body)
+	if err != nil {
+		fmt.Println(err)
+	}
+	return string(raw_creds[:])
+
+}
+
 func CreateAPIKey(nonce int64) APICreds {
 	endpoint := HOST + CREATE_API_KEY
-	headers := CreateLevel1Headers(POLYMARKET_SIGNER, nonce)
+	headers := CreateLevel1Headers(nonce)
 	raw_creds, err := PostWithL1Headers(endpoint, headers, nil)
 	if err != nil {
 		fmt.Println(err)
@@ -57,7 +86,7 @@ func CreateAPIKey(nonce int64) APICreds {
 
 func DeriveAPIKey(nonce int64) APICreds {
 	endpoint := HOST + DERIVE_API_KEY
-	headers := CreateLevel1Headers(POLYMARKET_SIGNER, nonce)
+	headers := CreateLevel1Headers(nonce)
 	raw_creds, err := GetWithL1Headers(endpoint, headers, nil)
 	if err != nil {
 		fmt.Println(err)
@@ -65,4 +94,19 @@ func DeriveAPIKey(nonce int64) APICreds {
 	}
 	fmt.Printf("Raw creds %s\n", string(raw_creds[:]))
 	return APICreds{}
+}
+
+func GetNotifications(nonce int64) {
+	endpoint := HOST + GET_NOTIFICATIONS + "?signature_type=2"
+	requestArgs := RequestArgs{
+		"GET",
+		GET_NOTIFICATIONS,
+		nil,
+	}
+	headers := CreateLevel2Headers(requestArgs)
+	raw_creds, err := GetWithL2Headers(endpoint, headers, nil)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Printf("Notifications %s\n", string(raw_creds[:]))
 }

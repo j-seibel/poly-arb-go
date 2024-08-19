@@ -5,6 +5,7 @@ import (
 
 	"poly/arb/abi"
 
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 )
 
@@ -30,3 +31,15 @@ var CLOB_REQUEST_STRUCTURE = []abi.Type{
 }
 
 var CLOB_ENCODE_HASH = crypto.Keccak256Hash([]byte("ClobAuth(address address,string timestamp,uint256 nonce,string message)"))
+
+var API_CREDS = APICreds{
+	"2cade072-7d71-7480-0ed0-418f0de112fa",
+	"Q4qyjHxWpCwNsPKjfnsQdUE0PFGRhlVcXH-4RE4CUYk=",
+	"f64fe106f25ccb2ec95c46e4dbb0e1d7cdb442cb54f6df4a4ac6d542bda155ca",
+}
+
+var POLYMARKET_SIGNER = Signer{
+	PK,
+	common.HexToAddress("0xA3D381B8C135cEd27efbbd3f231a0E1B6B931ad0"),
+	137,
+}

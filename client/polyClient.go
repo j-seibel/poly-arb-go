@@ -19,31 +19,32 @@ import (
 	"github.com/ethereum/go-ethereum/crypto"
 )
 
-func CreateLevel2Headers(signer Signer, creds APICreds, requestArgs RequestArgs) L2Headers {
-	// timestamp := time.Now().Unix()
-	timestamp := int64(1724004182)
+func CreateLevel2Headers(requestArgs RequestArgs) L2Headers {
+	timestamp := time.Now().Unix()
+	// timestamp := int64(1724036502)
 	timestampString := fmt.Sprintf("%d", timestamp)
+	// fmt.Printf("HMACSignature: %v\n", buildHMACSignature(API_CREDS.api_secret, timestampString, requestArgs.method, requestArgs.requestPath, requestArgs.body))
 	return L2Headers{
-		signer.account.String(),
-		buildHMACSignature(creds.api_secret, timestampString, requestArgs.method, requestArgs.requestPath, requestArgs.body),
+		POLYMARKET_SIGNER.account.String(),
+		buildHMACSignature(API_CREDS.api_secret, timestampString, requestArgs.method, requestArgs.requestPath, requestArgs.body),
 		timestampString,
-		creds.api_key,
-		creds.api_passphrase,
+		API_CREDS.api_key,
+		API_CREDS.api_passphrase,
 	}
 }
 
-func CreateLevel1Headers(signer Signer, nonce int64) L1Headers {
+func CreateLevel1Headers(nonce int64) L1Headers {
 	timestamp := big.NewInt(time.Now().Unix())
 	// timestamp := big.NewInt(1724005368)
 	timestampString := fmt.Sprintf("%d", timestamp)
 
-	signature, err := signClobAuthMessage(signer.private_key, *timestamp, *big.NewInt(nonce))
+	signature, err := signClobAuthMessage(POLYMARKET_SIGNER.private_key, *timestamp, *big.NewInt(nonce))
 
 	if err != nil {
 		fmt.Println("Error signing CLOBAuth message")
 	}
 	return L1Headers{
-		signer.account.String(),
+		POLYMARKET_SIGNER.account.String(),
 		"0x" + hex.EncodeToString(signature),
 		timestampString,
 		strconv.Itoa(int(nonce)),
@@ -66,13 +67,17 @@ func GenerateUniqueNonce() int64 {
 func buildHMACSignature(secret, timestamp, method, requestPath string, body *string) string {
 	// Decode the base64 secret
 	base64Secret, err := base64.URLEncoding.DecodeString(secret)
+	fmt.Printf("Secret: %v\n", base64Secret)
 	if err != nil {
 		return ""
 	}
 
 	// Build the message to be signed
 	message := timestamp + method + requestPath
+	// message := "1724036207GET/notifications"
+	fmt.Printf("Message: %v\n", message)
 	if body != nil {
+
 		message += *body
 	}
 

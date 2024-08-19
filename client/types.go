@@ -55,3 +55,8 @@ type Domain struct {
 	version  string
 	chain_id int
 }
+
+type BookParams struct {
+	token_id string
+	side     string
+}
