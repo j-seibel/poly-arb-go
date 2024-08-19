@@ -2,24 +2,26 @@ package client
 
 import (
 	"crypto/hmac"
+	"crypto/rand"
 	"crypto/sha256"
 	"encoding/base64"
+	"encoding/hex"
+	"math/big"
+	"strconv"
+
 	"fmt"
 	"time"
 
+	"poly/arb/eip712"
+	"poly/arb/signer"
+
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/crypto"
 )
 
-const private_key = "0x3273d17583f924c65451317e658532dc62a9cc52505183eb4b65f121660e8ed1"
-
-var singer = Signer{
-	private_key,
-	common.HexToAddress("0x7e5f4552091a69125d5dfcb7b8c2659029395bdf"),
-	137,
-}
-
 func CreateLevel2Headers(signer Signer, creds APICreds, requestArgs RequestArgs) L2Headers {
-	timestamp := time.Now().Unix()
+	// timestamp := time.Now().Unix()
+	timestamp := int64(1724004182)
 	timestampString := fmt.Sprintf("%d", timestamp)
 	return L2Headers{
 		signer.account.String(),
@@ -29,6 +31,38 @@ func CreateLevel2Headers(signer Signer, creds APICreds, requestArgs RequestArgs)
 		creds.api_passphrase,
 	}
 }
+
+func CreateLevel1Headers(signer Signer, nonce int64) L1Headers {
+	timestamp := big.NewInt(time.Now().Unix())
+	// timestamp := big.NewInt(1724005368)
+	timestampString := fmt.Sprintf("%d", timestamp)
+
+	signature, err := signClobAuthMessage(signer.private_key, *timestamp, *big.NewInt(nonce))
+
+	if err != nil {
+		fmt.Println("Error signing CLOBAuth message")
+	}
+	return L1Headers{
+		signer.account.String(),
+		"0x" + hex.EncodeToString(signature),
+		timestampString,
+		strconv.Itoa(int(nonce)),
+	}
+}
+func generateRandomNonce() (int64, error) {
+	n, err := rand.Int(rand.Reader, big.NewInt(1000000))
+	if err != nil {
+		return 0, err
+	}
+	return n.Int64(), nil
+}
+
+func GenerateUniqueNonce() int64 {
+	timestamp := time.Now().UnixNano()
+	randValue, _ := generateRandomNonce()
+	return timestamp + randValue
+}
+
 func buildHMACSignature(secret, timestamp, method, requestPath string, body *string) string {
 	// Decode the base64 secret
 	base64Secret, err := base64.URLEncoding.DecodeString(secret)
@@ -50,4 +84,51 @@ func buildHMACSignature(secret, timestamp, method, requestPath string, body *str
 	signature := base64.URLEncoding.EncodeToString(h.Sum(nil))
 
 	return signature
+}
+
+const (
+	ClobDomainName = "ClobAuthDomain"
+	ClobVersion    = "1"
+	MsgToSign      = "This message attests that I control the given wallet"
+)
+
+func signClobAuthMessage(privKey string, timestamp, nonce big.Int) ([]byte, error) {
+	name := crypto.Keccak256Hash([]byte(ClobDomainName))
+	version := crypto.Keccak256Hash([]byte(ClobVersion))
+	chainId := big.NewInt(137)
+	address := common.HexToAddress(POLYMARKET_SIGNER.account.Hex())
+	domainSeperator, err := eip712.BuildEIP712DomainSeparatorNoContract(name, version, chainId)
+
+	fmt.Printf("Domain Seperator: %v\n", domainSeperator)
+	if err != nil {
+		return []byte{}, err
+	}
+
+	fmt.Printf("timestamp: %s\n", timestamp.String())
+	values := []interface{}{
+		CLOB_ENCODE_HASH,
+		address,
+		timestamp.String(),
+		&nonce,
+		MsgToSign,
+	}
+
+	fmt.Printf("Values: %v\n", values)
+
+	hash, err := eip712.HashTypedDataV4(domainSeperator, CLOB_REQUEST_STRUCTURE, values)
+
+	if err != nil {
+		fmt.Println("Error hashing typed data", err)
+		return []byte{}, err
+	}
+
+	keyBytes, err := hex.DecodeString(privKey)
+	if err != nil {
+		//empty byte array
+		return []byte{}, err
+	}
+
+	// Create the private key from the byte slice
+	PK, _ := crypto.ToECDSA(keyBytes)
+	return signer.Sign(PK, hash)
 }

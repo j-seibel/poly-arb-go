@@ -1,9 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"poly/arb/client"
 )
 
 func main() {
-	client.Test()
+	fmt.Println(client.DeriveAPIKey(0))
 }
