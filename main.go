@@ -5,5 +5,5 @@ import (
 )
 
 func main() {
-	client.GetNotifications(0)
+	client.ExecuteOrder(1, 1, "")
 }

@@ -60,3 +60,50 @@ type BookParams struct {
 	token_id string
 	side     string
 }
+
+type Order struct {
+	Price string `json:"price"`
+	Size  string `json:"size"`
+}
+
+type BookData struct {
+	Asks      []Order `json:"asks"`
+	Bids      []Order `json:"bids"`
+	AssetID   string  `json:"asset_id"`
+	EventType string  `json:"event_type"`
+	Hash      string  `json:"hash"`
+	Market    string  `json:"market"`
+	Timestamp string  `json:"timestamp"`
+}
+
+type PriceChange struct {
+	AssetID   string `json:"asset_id"`
+	EventType string `json:"event_type"`
+	Hash      string `json:"hash"`
+	Market    string `json:"market"`
+	Price     string `json:"price"`
+	Side      string `json:"side"`
+	Size      string `json:"size"`
+	Timestamp string `json:"timestamp"`
+}
+
+type NegRiskMarketInfo struct {
+	condition_id string
+	yes_token_id string
+	no_token_id  string
+}
+
+type OrderBook struct {
+	asks    map[float64]float64
+	bids    map[float64]float64
+	min_ask float64
+}
+
+type NegRiskOrderBook struct {
+	condition_id string
+	yes_token_id string
+	no_token_id  string
+	order_books  map[string]*OrderBook
+	num_assets   int
+	total_price  float64
+}

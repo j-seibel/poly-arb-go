@@ -18,7 +18,6 @@ func GetWithL0Headers(endpoint string, jsonData []byte) ([]byte, error) {
 	req.Header.Set("Connection", "keep-alive")
 	req.Header.Set("Content-Type", "application/json")
 	req.Header["User-Agent"] = []string{"py_clob_client"}
-	fmt.Println("Headers: ", req.Header)
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
@@ -46,7 +45,6 @@ func PostWithL0Headers(endpoint string, jsonData []byte) ([]byte, error) {
 	req.Header.Set("Connection", "keep-alive")
 	req.Header.Set("Content-Type", "application/json")
 	req.Header["User-Agent"] = []string{"py_clob_client"}
-	fmt.Println("Headers: ", req.Header)
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
@@ -80,7 +78,6 @@ func PostWithL1Headers(endpoint string, headers L1Headers, jsonData []byte) ([]b
 	req.Header["POLY_NONCE"] = []string{headers.POLY_NONCE}
 	// req.Header["Accept-Encoding"] = []string{"gzip, deflate"}
 	req.Header["User-Agent"] = []string{"py_clob_client"}
-	fmt.Println("Headers: ", req.Header)
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
@@ -114,7 +111,6 @@ func GetWithL1Headers(endpoint string, headers L1Headers, jsonData []byte) ([]by
 	req.Header["POLY_NONCE"] = []string{headers.POLY_NONCE}
 	// req.Header["Accept-Encoding"] = []string{"gzip, deflate"}
 	req.Header["User-Agent"] = []string{"py_clob_client"}
-	fmt.Println("Headers: ", req.Header)
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
@@ -150,10 +146,10 @@ func PostWithL2Headers(endpoint string, headers L2Headers, jsonData []byte) ([]b
 	req.Header["POLY_PASSPHRASE"] = []string{headers.POLY_PASSPHRASE}
 	// req.Header["Accept-Encoding"] = []string{"gzip, deflate"}
 	req.Header["User-Agent"] = []string{"py_clob_client"}
-	fmt.Println("Headers: ", req.Header)
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
+		fmt.Println("error sending request: ", err)
 		return nil, fmt.Errorf("error sending request: %v", err)
 	}
 	defer resp.Body.Close()
@@ -163,6 +159,7 @@ func PostWithL2Headers(endpoint string, headers L2Headers, jsonData []byte) ([]b
 	if err != nil {
 		return nil, fmt.Errorf("error reading response body: %v", err)
 	}
+	fmt.Println("Response body: ", string(body))
 
 	return body, nil
 }
@@ -184,7 +181,6 @@ func GetWithL2Headers(endpoint string, headers L2Headers, jsonData []byte) ([]by
 	req.Header["POLY_PASSPHRASE"] = []string{headers.POLY_PASSPHRASE}
 	// req.Header["Accept-Encoding"] = []string{"gzip, deflate"}
 	req.Header["User-Agent"] = []string{"py_clob_client"}
-	fmt.Println("Headers: ", req.Header)
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {

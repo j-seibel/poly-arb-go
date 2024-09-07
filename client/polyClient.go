@@ -67,7 +67,6 @@ func GenerateUniqueNonce() int64 {
 func buildHMACSignature(secret, timestamp, method, requestPath string, body *string) string {
 	// Decode the base64 secret
 	base64Secret, err := base64.URLEncoding.DecodeString(secret)
-	fmt.Printf("Secret: %v\n", base64Secret)
 	if err != nil {
 		return ""
 	}
@@ -75,7 +74,6 @@ func buildHMACSignature(secret, timestamp, method, requestPath string, body *str
 	// Build the message to be signed
 	message := timestamp + method + requestPath
 	// message := "1724036207GET/notifications"
-	fmt.Printf("Message: %v\n", message)
 	if body != nil {
 
 		message += *body
@@ -104,12 +102,10 @@ func signClobAuthMessage(privKey string, timestamp, nonce big.Int) ([]byte, erro
 	address := common.HexToAddress(POLYMARKET_SIGNER.account.Hex())
 	domainSeperator, err := eip712.BuildEIP712DomainSeparatorNoContract(name, version, chainId)
 
-	fmt.Printf("Domain Seperator: %v\n", domainSeperator)
 	if err != nil {
 		return []byte{}, err
 	}
 
-	fmt.Printf("timestamp: %s\n", timestamp.String())
 	values := []interface{}{
 		CLOB_ENCODE_HASH,
 		address,
@@ -117,8 +113,6 @@ func signClobAuthMessage(privKey string, timestamp, nonce big.Int) ([]byte, erro
 		&nonce,
 		MsgToSign,
 	}
-
-	fmt.Printf("Values: %v\n", values)
 
 	hash, err := eip712.HashTypedDataV4(domainSeperator, CLOB_REQUEST_STRUCTURE, values)
 

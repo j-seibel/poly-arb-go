@@ -110,3 +110,19 @@ func GetNotifications(nonce int64) {
 	}
 	fmt.Printf("Notifications %s\n", string(raw_creds[:]))
 }
+
+func GetMarkets(next_cursor string) string {
+	endpoint := HOST + GET_MARKETS + "?next_cursor=" + next_cursor
+	requestArgs := RequestArgs{
+		"GET",
+		GET_MARKETS,
+		nil,
+	}
+	headers := CreateLevel2Headers(requestArgs)
+	raw_creds, err := GetWithL2Headers(endpoint, headers, nil)
+	if err != nil {
+		fmt.Println(err)
+	}
+	// fmt.Printf("Markets %s\n", string(raw_creds[:]))
+	return string(raw_creds[:])
+}

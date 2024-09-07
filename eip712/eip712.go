@@ -1,6 +1,7 @@
 package eip712
 
 import (
+	"encoding/hex"
 	"fmt"
 	"math/big"
 
@@ -50,5 +51,8 @@ func HashTypedDataV4(domainSeparator common.Hash, args []abi.Type, values []inte
 	}
 	//convert encoded bytes to hex and print
 	rawData := []byte(fmt.Sprintf("\x19\x01%s%s", string(domainSeparator[:]), string(crypto.Keccak256Hash(encoded).Bytes())))
+	//print encoded in hex
+	fmt.Println("Encoded in hex", hex.EncodeToString(encoded))
+
 	return crypto.Keccak256Hash(rawData), nil
 }
