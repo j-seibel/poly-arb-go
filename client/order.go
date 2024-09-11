@@ -4,11 +4,12 @@ import (
 	"encoding/hex"
 	"fmt"
 	"math/big"
+	"poly/arb/builder"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/polymarket/go-order-utils/pkg/builder"
-	"github.com/polymarket/go-order-utils/pkg/model"
+
+	"poly/arb/model"
 )
 
 var (
