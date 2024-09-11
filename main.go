@@ -5,5 +5,5 @@ import (
 )
 
 func main() {
-	client.ExecuteOrder(1, 1, "")
+	client.FindNegRiskMarkets()
 }

@@ -10,6 +10,7 @@ import (
 const host = "wss://ws-subscriptions-clob.polymarket.com/ws/market"
 
 func ConnectSocket(asset_ids []string) {
+	fmt.Println("Connecting to socket")
 	c, _, err := websocket.DefaultDialer.Dial(host, nil)
 	if err != nil {
 		fmt.Println(err)
@@ -54,4 +55,5 @@ func ConnectSocket(asset_ids []string) {
 		}
 
 	}
+	WG.Done()
 }

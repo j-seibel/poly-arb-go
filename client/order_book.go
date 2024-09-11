@@ -20,7 +20,8 @@ func InitOrderBooks() {
 
 	}
 
-	fmt.Println(OrderBooks)
+	// fmt.Println(OrderBooks)
+	fmt.Println("Order Books Initialized")
 
 }
 
@@ -52,7 +53,8 @@ func UpdateOrderPrice(priceChangeEvent PriceChange) {
 		if OrderBooks[negRiskId].total_price < float64(OrderBooks[negRiskId].num_assets-1) {
 			// Arbitrage opportunity
 			fmt.Println("Arbitrage opportunity")
-			fmt.Println(NegRiskMarketMap[negRiskId])
+			ExecuteArb(negRiskId)
+
 		}
 
 	}
@@ -73,11 +75,10 @@ func UpdateOrderBook(bookDataEvent BookData) {
 	OrderBooks[negRiskId].order_books[bookDataEvent.AssetID] = &newBook
 
 	difference := roundto2decimals(OrderBooks[negRiskId].order_books[bookDataEvent.AssetID].min_ask - old_min)
-	OrderBooks[negRiskId].total_price += difference
+	OrderBooks[negRiskId].total_price = roundto2decimals(OrderBooks[negRiskId].total_price + difference)
 	if OrderBooks[negRiskId].total_price < float64(OrderBooks[negRiskId].num_assets-1) {
 		// Arbitrage opportunity
-		fmt.Println("Arbitrage opportunity")
-		fmt.Println(NegRiskMarketMap[negRiskId])
+		ExecuteArb(negRiskId)
 
 	}
 }
@@ -93,5 +94,5 @@ func findMinKey(m map[float64]float64) float64 {
 }
 
 func roundto2decimals(n float64) float64 {
-	return math.Round(n*100) / 100
+	return math.Round(n*100000) / 100000
 }

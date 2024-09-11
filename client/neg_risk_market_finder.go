@@ -2,6 +2,8 @@ package client
 
 import (
 	"encoding/json"
+	"fmt"
+	"sync"
 	// "fmt"
 )
 
@@ -11,6 +13,7 @@ var TokenToTicksize = make(map[string]float64)
 var TokenToIndex = make(map[string]int)
 var NumNegRiskMarketsMap = make(map[string]int)
 var AssetsToWatch []string
+var WG sync.WaitGroup
 
 func FindNegRiskMarkets() {
 	cursor := "MTAw"
@@ -42,8 +45,6 @@ func FindNegRiskMarkets() {
 			}
 		}
 		cursor = marketMap["next_cursor"].(string)
-		// fmt.Println("Next Cursor: ", cursor)
-		// fmt.Println(marketMap["next_cursor"])
 
 	}
 
@@ -52,13 +53,15 @@ func FindNegRiskMarkets() {
 			AssetsToWatch = append(AssetsToWatch, asset.no_token_id)
 		}
 	}
-
+	fmt.Println("Assets to watch: ", len(AssetsToWatch))
 	InitOrderBooks()
 	StartSubscription()
+	WG.Wait()
 }
 
 func StartSubscription() {
 	for i := 0; i < len(AssetsToWatch); i += 400 {
-		ConnectSocket(AssetsToWatch[i : i+400])
+		WG.Add(1)
+		go ConnectSocket(AssetsToWatch[i:min(i+400, len(AssetsToWatch))])
 	}
 }

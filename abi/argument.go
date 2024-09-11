@@ -241,7 +241,6 @@ func (arguments Arguments) Pack(args ...interface{}) ([]byte, error) {
 		input := abiArgs[i]
 		// pack the input
 		// check if input is a string
-		fmt.Println("a", a)
 
 		packed, err := input.Type.pack(reflect.ValueOf(a))
 		if err != nil {
