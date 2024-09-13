@@ -1,9 +1,10 @@
 package client
 
 import (
-	"encoding/json"
 	"fmt"
 	"sync"
+
+	"github.com/goccy/go-json"
 	// "fmt"
 )
 

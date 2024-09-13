@@ -1,4 +1,4 @@
-package eip712
+package order_eip
 
 import (
 	"github.com/ethereum/go-ethereum/accounts/abi"

@@ -44,13 +44,13 @@ func ConnectSocket(asset_ids []string) {
 		if messageMap["event_type"] == "price_change" {
 			var priceChange PriceChange
 			json.Unmarshal(message, &priceChange)
-			// fmt.Println(priceChange)
+			// fmt.Println("price")
 			UpdateOrderPrice(priceChange)
 
 		} else if messageMap["event_type"] == "book" {
 			var bookData BookData
 			json.Unmarshal(message, &bookData)
-			// fmt.Println(bookData)
+			// fmt.Println("book")
 			UpdateOrderBook(bookData)
 		}
 

@@ -4,15 +4,20 @@ import (
 	"math"
 	"os"
 	"sync"
+	"time"
 )
 
-var cooldown_queue = []string{}
+var cooldown_queue = map[string]bool{}
 var WG_Order sync.WaitGroup
 
 func ExecuteArb(neg_risk_id string) {
+
+	if cooldown_queue[neg_risk_id] {
+		return
+	}
 	markets_to_trade := NegRiskMarketMap[neg_risk_id]
 	volume_to_trade := 10e10
-	const max_volume = 5
+	const max_volume = 50
 	// slice to keep track of indexes of the tokens to trade
 	indexes := make([]int, len(markets_to_trade))
 	for _, market := range markets_to_trade {
@@ -40,17 +45,21 @@ func ExecuteArb(neg_risk_id string) {
 		}
 
 		// Increment wait group counter
-		WG_Order.Add(1)
 
+		ExecuteOrder(no_token_price, volume_to_trade, no_token_id)
 		// Execute order in a goroutine
-		go func(no_token_price float64, volume_to_trade float64, no_token_id string, condition_id string) {
-			defer WG_Order.Done() // Mark as done when goroutine finishes
-			ExecuteOrder(no_token_price, volume_to_trade, no_token_id)
-		}(no_token_price, volume_to_trade, no_token_id, market.condition_id)
+		// go func(no_token_price float64, volume_to_trade float64, no_token_id string, condition_id string) {
+		// 	defer WG_Order.Done() // Mark as done when goroutine finishes
+		// 	ExecuteOrder(no_token_price, volume_to_trade, no_token_id)
+		// }(no_token_price, volume_to_trade, no_token_id, market.condition_id)
+		cooldown_queue[no_token_id] = true
+		go func(no_token_id string) {
+			time.Sleep(time.Duration(30) * time.Second)
+			cooldown_queue[no_token_id] = false
+		}(neg_risk_id)
 	}
 
 	// Wait for all orders to complete
-	WG_Order.Wait()
 
 	// Exit after all goroutines finish
 	os.Exit(0)

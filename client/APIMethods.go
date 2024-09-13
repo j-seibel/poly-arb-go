@@ -1,12 +1,12 @@
 package client
 
 import (
-	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
 
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/goccy/go-json"
 )
 
 func GetAddress() common.Address {

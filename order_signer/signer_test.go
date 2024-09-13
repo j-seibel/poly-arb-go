@@ -1,4 +1,4 @@
-package signer
+package order_signer
 
 import (
 	"crypto/ecdsa"

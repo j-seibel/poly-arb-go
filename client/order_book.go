@@ -28,7 +28,8 @@ func InitOrderBooks() {
 func UpdateOrderPrice(priceChangeEvent PriceChange) {
 	negRiskId := TokenToMarketMap[priceChangeEvent.AssetID]
 	tokenId := priceChangeEvent.AssetID
-	if priceChangeEvent.Side == "buy" {
+	if priceChangeEvent.Side != "BUY" {
+		// fmt.Println("Buy")
 		old_min := OrderBooks[negRiskId].order_books[tokenId].min_ask
 		price, _ := strconv.ParseFloat(priceChangeEvent.Price, 64)
 		amount, _ := strconv.ParseFloat(priceChangeEvent.Size, 64)
@@ -48,12 +49,14 @@ func UpdateOrderPrice(priceChangeEvent PriceChange) {
 			}
 		}
 
-		difference := roundto2decimals(price - old_min)
-		OrderBooks[negRiskId].total_price += difference
+		difference := roundto2decimals(OrderBooks[negRiskId].order_books[tokenId].min_ask - old_min)
+		OrderBooks[negRiskId].total_price = roundto2decimals(OrderBooks[negRiskId].total_price + difference)
 		if OrderBooks[negRiskId].total_price < float64(OrderBooks[negRiskId].num_assets-1) {
 			// Arbitrage opportunity
-			fmt.Println("Arbitrage opportunity")
+			// fmt.Println("Arbitrage opportunity")
 			ExecuteArb(negRiskId)
+			fmt.Println("Price Arbitrage opportunity", OrderBooks[negRiskId].total_price, float64(OrderBooks[negRiskId].num_assets-1))
+			fmt.Println(OrderBooks[negRiskId].condition_id)
 
 		}
 
@@ -78,7 +81,9 @@ func UpdateOrderBook(bookDataEvent BookData) {
 	OrderBooks[negRiskId].total_price = roundto2decimals(OrderBooks[negRiskId].total_price + difference)
 	if OrderBooks[negRiskId].total_price < float64(OrderBooks[negRiskId].num_assets-1) {
 		// Arbitrage opportunity
-		ExecuteArb(negRiskId)
+		fmt.Println("Order Book Arbitrage opportunity")
+		fmt.Println(OrderBooks[negRiskId].condition_id)
+		// ExecuteArb(negRiskId)
 
 	}
 }
@@ -94,5 +99,5 @@ func findMinKey(m map[float64]float64) float64 {
 }
 
 func roundto2decimals(n float64) float64 {
-	return math.Round(n*100000) / 100000
+	return math.Round(n*1000) / 1000
 }
