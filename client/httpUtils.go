@@ -159,8 +159,7 @@ func PostWithL2Headers(endpoint string, headers L2Headers, jsonData []byte) ([]b
 	if err != nil {
 		return nil, fmt.Errorf("error reading response body: %v", err)
 	}
-	print(string(body))
-
+	fmt.Println("response body: ", string(body))
 	// print(string(body))
 	return body, nil
 }
