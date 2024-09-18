@@ -40,7 +40,7 @@ func ExecuteOrder(price int64, volume int64, tokenId string) {
 	}
 	body := GetOrderBody(signed_order)
 	PostWithL2Headers(HOST+POST_ORDER, CreateLevel2Headers(RequestArgs{"POST", POST_ORDER, &body}), []byte(body))
-
+	fmt.Println(string(body))
 }
 
 func GetOrderBody(signed_order *model.SignedOrder) string {

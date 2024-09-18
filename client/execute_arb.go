@@ -50,6 +50,7 @@ func ExecuteArb(neg_risk_id string) {
 			defer ExecuteOrder(no_token_price, volume_to_trade, no_token_id)
 		}(no_token_price, volume_to_trade, no_token_id, market.condition_id)
 		cooldown_queue[no_token_id] = true
+		
 		go func(no_token_id string) {
 			time.Sleep(time.Duration(30) * time.Second)
 			cooldown_queue[no_token_id] = false
