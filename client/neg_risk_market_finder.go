@@ -15,8 +15,11 @@ var TokenToIndex = make(map[string]int)
 var NumNegRiskMarketsMap = make(map[string]int)
 var AssetsToWatch []string
 var WG sync.WaitGroup
+var CPU_Profiler = &Profiler{}
 
 func FindNegRiskMarkets() {
+
+	// CPU_Profiler.StartCPUProfile()
 	cursor := "MTAw"
 	for cursor != "LTE=" {
 

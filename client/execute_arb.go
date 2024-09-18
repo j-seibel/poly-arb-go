@@ -57,6 +57,7 @@ func ExecuteArb(neg_risk_id string) {
 	}
 
 	time.Sleep(time.Duration(30) * time.Second)
+	// CPU_Profiler.StopCPUProfile()
 
 	// Wait for all orders to complete
 
