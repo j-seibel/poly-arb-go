@@ -94,9 +94,9 @@ type NegRiskMarketInfo struct {
 }
 
 type OrderBook struct {
-	asks    map[float64]float64
-	bids    map[float64]float64
-	min_ask float64
+	asks    map[int64]int64
+	bids    map[int64]int64
+	min_ask int64
 }
 
 type NegRiskOrderBook struct {
@@ -104,6 +104,6 @@ type NegRiskOrderBook struct {
 	yes_token_id string
 	no_token_id  string
 	order_books  map[string]*OrderBook
-	num_assets   int
-	total_price  float64
+	num_assets   int64
+	total_price  int64
 }

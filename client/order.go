@@ -16,7 +16,7 @@ var (
 	private_key, _ = crypto.ToECDSA(common.Hex2Bytes(PK))
 )
 
-func ExecuteOrder(price float64, volume float64, tokenId string) {
+func ExecuteOrder(price int64, volume int64, tokenId string) {
 	// Execute an order
 	var builder = builder.NewExchangeOrderBuilderImpl(big.NewInt(137), nil)
 
@@ -25,8 +25,8 @@ func ExecuteOrder(price float64, volume float64, tokenId string) {
 		Signer:        "0xA3D381B8C135cEd27efbbd3f231a0E1B6B931ad0",
 		Taker:         "0x0000000000000000000000000000000000000000",
 		TokenId:       tokenId,
-		MakerAmount:   fmt.Sprintf("%d", int(RoundToTickSize(price*volume, tokenId)*1000000)),
-		TakerAmount:   fmt.Sprintf("%d", int(volume*1000000)),
+		MakerAmount:   fmt.Sprintf("%d", int((price * (volume / PRICE_MULT)))),
+		TakerAmount:   fmt.Sprintf("%d", int(volume)),
 		Side:          model.BUY,
 		FeeRateBps:    "0",
 		Nonce:         "0",
