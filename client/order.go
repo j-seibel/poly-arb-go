@@ -25,7 +25,7 @@ func ExecuteOrder(price int64, volume int64, tokenId string) {
 		Signer:        "0xA3D381B8C135cEd27efbbd3f231a0E1B6B931ad0",
 		Taker:         "0x0000000000000000000000000000000000000000",
 		TokenId:       tokenId,
-		MakerAmount:   fmt.Sprintf("%d", int((price * (volume / PRICE_MULT)))),
+		MakerAmount:   fmt.Sprintf("%d", RoundToTickSize(int64((price*(volume/PRICE_MULT))), tokenId)),
 		TakerAmount:   fmt.Sprintf("%d", int(volume)),
 		Side:          model.BUY,
 		FeeRateBps:    "0",

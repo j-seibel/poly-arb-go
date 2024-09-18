@@ -1,7 +1,6 @@
 package client
 
 import (
-	"math"
 	"os"
 	"sync"
 	"time"
@@ -50,7 +49,7 @@ func ExecuteArb(neg_risk_id string) {
 			defer ExecuteOrder(no_token_price, volume_to_trade, no_token_id)
 		}(no_token_price, volume_to_trade, no_token_id, market.condition_id)
 		cooldown_queue[no_token_id] = true
-		
+
 		go func(no_token_id string) {
 			time.Sleep(time.Duration(30) * time.Second)
 			cooldown_queue[no_token_id] = false
@@ -67,7 +66,7 @@ func ExecuteArb(neg_risk_id string) {
 
 }
 
-func RoundToTickSize(price float64, token_id string) float64 {
+func RoundToTickSize(price int64, token_id string) int64 {
 	tick_size := TokenToTicksize[token_id]
-	return math.Round(price/tick_size) / (1 / tick_size)
+	return price - (price % int64(tick_size*PRICE_MULT))
 }
