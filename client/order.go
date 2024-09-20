@@ -39,6 +39,7 @@ func ExecuteOrder(price int64, volume int64, tokenId string) {
 		fmt.Println("Error building signed order", err)
 	}
 	body := GetOrderBody(signed_order)
+	print(RoundToTickSize(int64((price * (volume / PRICE_MULT))), tokenId))
 	PostWithL2Headers(HOST+POST_ORDER, CreateLevel2Headers(RequestArgs{"POST", POST_ORDER, &body}), []byte(body))
 }
 

@@ -3,6 +3,7 @@ package client
 import (
 	"encoding/json"
 	"fmt"
+	"time"
 
 	"github.com/gorilla/websocket"
 )
@@ -10,6 +11,9 @@ import (
 const host = "wss://ws-subscriptions-clob.polymarket.com/ws/market"
 
 func ConnectSocket(asset_ids []string) {
+
+	// sleep to limit rate limit
+	time.Sleep(10 * time.Second)
 	fmt.Println("Connecting to socket")
 	c, _, err := websocket.DefaultDialer.Dial(host, nil)
 	if err != nil {
