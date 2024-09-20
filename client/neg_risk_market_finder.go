@@ -1,7 +1,7 @@
 package client
 
 import (
-	"fmt"
+	"os"
 	"sync"
 
 	"github.com/goccy/go-json"
@@ -57,13 +57,29 @@ func FindNegRiskMarkets() {
 			AssetsToWatch = append(AssetsToWatch, asset.no_token_id)
 		}
 	}
-	fmt.Println("Assets to watch: ", len(AssetsToWatch))
-	InitOrderBooks()
-	StartSubscription()
+	writeJsonAssetsToFile(AssetsToWatch, "assets.json")
+	// fmt.Println("Assets to watch: ", len(AssetsToWatch))
+
+	// StartSubscription()
 	WG.Wait()
 }
 
+func writeJsonAssetsToFile(data interface{}, filename string) {
+	file, _ := json.Marshal(data)
+	os.WriteFile(filename, file, 0644)
+}
+
+func readJsonAssetsFromFile(filename string) []string {
+	ast := make([]string, 0)
+	file, _ := os.ReadFile(filename)
+	json.Unmarshal(file, &ast)
+	return ast
+}
+
 func StartSubscription() {
+	InitOrderBooks()
+	AssetsToWatch = readJsonAssetsFromFile("assets.json")
+	println("Subscribing to sockets")
 	for i := 0; i < len(AssetsToWatch); i += 400 {
 		WG.Add(1)
 		go ConnectSocket(AssetsToWatch[i:min(i+400, len(AssetsToWatch))])
