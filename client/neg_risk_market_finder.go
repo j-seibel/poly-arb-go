@@ -61,7 +61,7 @@ func FindNegRiskMarkets() {
 	// fmt.Println("Assets to watch: ", len(AssetsToWatch))
 
 	// StartSubscription()
-	WG.Wait()
+
 }
 
 func writeJsonAssetsToFile(data interface{}, filename string) {
@@ -84,4 +84,5 @@ func StartSubscription() {
 		WG.Add(1)
 		go ConnectSocket(AssetsToWatch[i:min(i+400, len(AssetsToWatch))])
 	}
+	WG.Wait()
 }
