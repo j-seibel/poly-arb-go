@@ -16,7 +16,8 @@ func ExecuteArb(neg_risk_id string) {
 	}
 	markets_to_trade := NegRiskMarketMap[neg_risk_id]
 	volume_to_trade := int64(10e10)
-	var max_volume = int64(1500/len(markets_to_trade)) * PRICE_MULT
+	var max_volume = int64((1500 * PRICE_MULT) / len(markets_to_trade))
+	// var max_volume = 5 * PRICE_MULT
 	// slice to keep track of indexes of the tokens to trade
 	indexes := make([]int, len(markets_to_trade))
 	for _, market := range markets_to_trade {
@@ -27,7 +28,7 @@ func ExecuteArb(neg_risk_id string) {
 
 	}
 	volume_to_trade = min(volume_to_trade, max_volume)
-	if volume_to_trade < 5 {
+	if volume_to_trade < 5*PRICE_MULT {
 		return
 	}
 	for _, market := range markets_to_trade {

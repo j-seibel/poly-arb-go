@@ -18,7 +18,8 @@ var (
 
 func ExecuteOrder(price int64, volume int64, tokenId string) {
 	// Execute an order
-	// fmt.Println("Price", RoundToTickSize(int64((price*(volume/PRICE_MULT))), tokenId))
+	fmt.Println("Price", RoundToTickSize(int64((price*(volume/PRICE_MULT))), tokenId), tokenId)
+	fmt.Println("Volume", volume)
 	var builder = builder.NewExchangeOrderBuilderImpl(big.NewInt(137), nil)
 	signed_order, err := builder.BuildSignedOrder(private_key, &model.OrderData{
 		Maker:         "0x6cd02aAfEEb049150014D3D9356613897Ce54e6C",
@@ -26,7 +27,7 @@ func ExecuteOrder(price int64, volume int64, tokenId string) {
 		Taker:         "0x0000000000000000000000000000000000000000",
 		TokenId:       tokenId,
 		MakerAmount:   fmt.Sprintf("%d", RoundToTickSize(int64((price*(volume/PRICE_MULT))), tokenId)),
-		TakerAmount:   fmt.Sprintf("%d", int(volume)),
+		TakerAmount:   fmt.Sprintf("%d", RoundToTickSize(volume, tokenId)),
 		Side:          model.BUY,
 		FeeRateBps:    "0",
 		Nonce:         "0",
