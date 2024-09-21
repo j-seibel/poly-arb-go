@@ -88,9 +88,9 @@ type PriceChange struct {
 }
 
 type NegRiskMarketInfo struct {
-	condition_id string
-	yes_token_id string
-	no_token_id  string
+	Condition_id string
+	Yes_token_id string
+	No_token_id  string
 }
 
 type OrderBook struct {

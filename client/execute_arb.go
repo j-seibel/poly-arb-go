@@ -20,7 +20,7 @@ func ExecuteArb(neg_risk_id string) {
 	// slice to keep track of indexes of the tokens to trade
 	indexes := make([]int, len(markets_to_trade))
 	for _, market := range markets_to_trade {
-		no_token_id := market.no_token_id
+		no_token_id := market.No_token_id
 		no_token_price := OrderBooks[neg_risk_id].order_books[no_token_id].min_ask
 		no_token_volume := OrderBooks[neg_risk_id].order_books[no_token_id].asks[no_token_price]
 		volume_to_trade = min(volume_to_trade, no_token_volume)
@@ -31,7 +31,7 @@ func ExecuteArb(neg_risk_id string) {
 		return
 	}
 	for _, market := range markets_to_trade {
-		no_token_id := market.no_token_id
+		no_token_id := market.No_token_id
 		no_token_index := TokenToIndex[no_token_id]
 		no_token_price := OrderBooks[neg_risk_id].order_books[no_token_id].min_ask
 		volume_to_trade = min(volume_to_trade, max_volume)
@@ -47,7 +47,7 @@ func ExecuteArb(neg_risk_id string) {
 		// Execute order in a goroutine
 		go func(no_token_price int64, volume_to_trade int64, no_token_id string, condition_id string) {
 			defer ExecuteOrder(no_token_price, volume_to_trade, no_token_id)
-		}(no_token_price, volume_to_trade, no_token_id, market.condition_id)
+		}(no_token_price, volume_to_trade, no_token_id, market.Condition_id)
 		cooldown_queue[no_token_id] = true
 
 		go func(no_token_id string) {

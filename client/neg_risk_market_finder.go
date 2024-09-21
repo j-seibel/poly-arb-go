@@ -1,6 +1,7 @@
 package client
 
 import (
+	"fmt"
 	"os"
 	"sync"
 
@@ -54,14 +55,23 @@ func FindNegRiskMarkets() {
 
 	for _, value := range NegRiskMarketMap {
 		for _, asset := range value {
-			AssetsToWatch = append(AssetsToWatch, asset.no_token_id)
+			AssetsToWatch = append(AssetsToWatch, asset.No_token_id)
 		}
 	}
 	writeJsonAssetsToFile(AssetsToWatch, "assets.json")
-	// fmt.Println("Assets to watch: ", len(AssetsToWatch))
+	writeJsonNegRiskMarketsToFile("neg_risk_markets.json")
+	writeJsonAssetsToFile(TokenToMarketMap, "token_to_market.json")
+	writeJsonAssetsToFile(TokenToTicksize, "token_to_ticksize.json")
+	writeJsonAssetsToFile(TokenToIndex, "token_to_index.json")
+	writeJsonAssetsToFile(NumNegRiskMarketsMap, "num_neg_risk_markets.json")
 
 	// StartSubscription()
 
+}
+
+func writeJsonNegRiskMarketsToFile(filename string) {
+	file, _ := json.Marshal(NegRiskMarketMap)
+	os.WriteFile(filename, file, 0644)
 }
 
 func writeJsonAssetsToFile(data interface{}, filename string) {
@@ -76,9 +86,55 @@ func readJsonAssetsFromFile(filename string) []string {
 	return ast
 }
 
-func StartSubscription() {
-	InitOrderBooks()
+func readTokenToMarketFromFile(filename string) map[string]string {
+	ast := make(map[string]string)
+	file, _ := os.ReadFile(filename)
+	json.Unmarshal(file, &ast)
+	return ast
+}
+
+func readTokenToTicksizeFromFile(filename string) map[string]float64 {
+	ast := make(map[string]float64)
+	file, _ := os.ReadFile(filename)
+	json.Unmarshal(file, &ast)
+	return ast
+}
+
+func readTokenToIndexFromFile(filename string) map[string]int {
+	ast := make(map[string]int)
+	file, _ := os.ReadFile(filename)
+	json.Unmarshal(file, &ast)
+	return ast
+}
+
+func readNumNegRiskMarketsFromFile(filename string) map[string]int {
+	ast := make(map[string]int)
+	file, _ := os.ReadFile(filename)
+	json.Unmarshal(file, &ast)
+	return ast
+}
+
+func readNegRiskMarketsFromFile(filename string) map[string][]NegRiskMarketInfo {
+	ast := make(map[string][]NegRiskMarketInfo)
+	file, _ := os.ReadFile(filename)
+	json.Unmarshal(file, &ast)
+	return ast
+}
+
+func SetupDicts() {
 	AssetsToWatch = readJsonAssetsFromFile("assets.json")
+	TokenToMarketMap = readTokenToMarketFromFile("token_to_market.json")
+	TokenToTicksize = readTokenToTicksizeFromFile("token_to_ticksize.json")
+	TokenToIndex = readTokenToIndexFromFile("token_to_index.json")
+	NumNegRiskMarketsMap = readNumNegRiskMarketsFromFile("num_neg_risk_markets.json")
+	NegRiskMarketMap = readNegRiskMarketsFromFile("neg_risk_markets.json")
+}
+
+func StartSubscription() {
+	SetupDicts()
+	fmt.Println("%v\n", NegRiskMarketMap)
+	InitOrderBooks()
+	fmt.Printf("Assets to watch: %v\n", len(AssetsToWatch))
 	println("Subscribing to sockets")
 	for i := 0; i < len(AssetsToWatch); i += 400 {
 		WG.Add(1)

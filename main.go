@@ -12,6 +12,7 @@ func main() {
 		if os.Args[1] == "r" {
 			println("Refreshing markets")
 			client.FindNegRiskMarkets()
+			return
 		}
 	}
 

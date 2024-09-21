@@ -12,11 +12,11 @@ const PRICE_MULT = 1000000
 
 func InitOrderBooks() {
 	for key, value := range NegRiskMarketMap {
-		OrderBooks[key] = &NegRiskOrderBook{value[0].condition_id, value[0].yes_token_id, value[0].no_token_id, make(map[string]*OrderBook), int64(len(value)), int64(PRICE_MULT * len(value))}
+		OrderBooks[key] = &NegRiskOrderBook{value[0].Condition_id, value[0].Yes_token_id, value[0].No_token_id, make(map[string]*OrderBook), int64(len(value)), int64(PRICE_MULT * len(value))}
 		defaultAskMap := make(map[int64]int64)
 		defaultAskMap[1] = 10e10
 		for _, market := range value {
-			OrderBooks[key].order_books[market.no_token_id] = &OrderBook{defaultAskMap, make(map[int64]int64), PRICE_MULT}
+			OrderBooks[key].order_books[market.No_token_id] = &OrderBook{defaultAskMap, make(map[int64]int64), PRICE_MULT}
 
 		}
 
