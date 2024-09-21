@@ -16,7 +16,7 @@ func ExecuteArb(neg_risk_id string) {
 	}
 	markets_to_trade := NegRiskMarketMap[neg_risk_id]
 	volume_to_trade := int64(10e10)
-	const max_volume = 5 * PRICE_MULT
+	var max_volume = int64(1500/len(markets_to_trade)) * PRICE_MULT
 	// slice to keep track of indexes of the tokens to trade
 	indexes := make([]int, len(markets_to_trade))
 	for _, market := range markets_to_trade {

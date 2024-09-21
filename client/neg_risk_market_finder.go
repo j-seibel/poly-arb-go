@@ -132,7 +132,6 @@ func SetupDicts() {
 
 func StartSubscription() {
 	SetupDicts()
-	fmt.Println("%v\n", NegRiskMarketMap)
 	InitOrderBooks()
 	fmt.Printf("Assets to watch: %v\n", len(AssetsToWatch))
 	println("Subscribing to sockets")
