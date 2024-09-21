@@ -18,8 +18,8 @@ var (
 
 func ExecuteOrder(price int64, volume int64, tokenId string) {
 	// Execute an order
-	fmt.Println("Price", RoundToTickSize(int64((price*(volume/PRICE_MULT))), tokenId), tokenId)
-	fmt.Println("Volume", volume)
+	// fmt.Println("Price", RoundToTickSize(int64((price*(volume/PRICE_MULT))), tokenId), tokenId)
+	// fmt.Println("Volume", volume)
 	var builder = builder.NewExchangeOrderBuilderImpl(big.NewInt(137), nil)
 	signed_order, err := builder.BuildSignedOrder(private_key, &model.OrderData{
 		Maker:         "0x6cd02aAfEEb049150014D3D9356613897Ce54e6C",
@@ -40,7 +40,7 @@ func ExecuteOrder(price int64, volume int64, tokenId string) {
 		fmt.Println("Error building signed order", err)
 	}
 	body := GetOrderBody(signed_order)
-	print(RoundToTickSize(int64((price * (volume / PRICE_MULT))), tokenId))
+	// print(RoundToTickSize(int64((price * (volume / PRICE_MULT))), tokenId))
 	PostWithL2Headers(HOST+POST_ORDER, CreateLevel2Headers(RequestArgs{"POST", POST_ORDER, &body}), []byte(body))
 }
 
