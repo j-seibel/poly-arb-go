@@ -18,8 +18,8 @@ var (
 
 func ExecuteOrder(price int64, volume int64, tokenId string) {
 	// Execute an order
+	// fmt.Println("Price", RoundToTickSize(int64((price*(volume/PRICE_MULT))), tokenId))
 	var builder = builder.NewExchangeOrderBuilderImpl(big.NewInt(137), nil)
-
 	signed_order, err := builder.BuildSignedOrder(private_key, &model.OrderData{
 		Maker:         "0x6cd02aAfEEb049150014D3D9356613897Ce54e6C",
 		Signer:        "0xA3D381B8C135cEd27efbbd3f231a0E1B6B931ad0",
