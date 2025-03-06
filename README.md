@@ -27,3 +27,5 @@ To run this program, you'll need:
    ```bash
    git clone https://github.com/yourusername/polymarket-arbitrage.git
    cd polymarket-arbitrage
+## Disclaimer
+This strategy can be rate limited and is not guaranteed to be profitable. It is heavlity dependent on latency.
